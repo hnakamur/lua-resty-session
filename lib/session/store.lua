@@ -18,10 +18,10 @@ function _M.new(self, config)
     }, mt)
 end
 
-function _M.add(self, data)
+function _M.add(self, data, exptime)
     local dict = self.dict
     local id_generator = self.id_generator
-    local exptime = self.exptime
+    local exptime = exptime or self.exptime
 
     local session_id, success, err, forcible
     repeat
