@@ -18,7 +18,9 @@ function _M.new(self, config)
         cookie_manager = cookie_manager,
         name = config.name,
         secure = config.secure,
-        path = config.path
+        path = config.path,
+        domain = config.domain,
+        samesite = config.samesite,
     }, mt)
 end
 
@@ -33,11 +35,18 @@ function _M.get(self)
     return value
 end
 
-function _M.set(self, session_id)
-    local ok, err = self.cookie_manager:set{
+function _M.set(self, session_id, opts)
+    local cookie_opts = {
         key = self.name, value = session_id,
-        path = self.path, secure = self.secure, httponly = true
+        path = self.path, secure = self.secure, httponly = true,
+        domain = self.domain, samesite = self.samesite,
     }
+    if opts ~= nil then
+        for k, v in pairs(opts) do
+            cookie_opts[k] = v
+        end
+    end
+    local ok, err = self.cookie_manager:set(cookie_opts)
     if not ok then
         return false,
             string.format("error to set session cookie, key=%s, value=%s, path=%s, secure=%s, err=%s",
